@@ -11,18 +11,18 @@ export interface PluginBundleOptions {
 }
 
 export const bundlePlugin = async ({ watch, production, preserveConsole }: PluginBundleOptions) => {
-  const compiler = webpack(
-    await loadWebpackConfig({
-      watch,
-      production,
-      preserveConsole,
-    })
-  );
+  const config = await loadWebpackConfig({
+    watch,
+    production,
+    preserveConsole,
+  });
+
+  const compiler = webpack(config);
 
   const webpackPromise = new Promise<void>((resolve, reject) => {
     if (watch) {
       console.log('Started watching plugin for changes...');
-      compiler.watch({}, (err, stats) => {});
+      compiler.watch(config.watchOptions || {}, (err, stats) => {});
 
       // @ts-ignore
       compiler.hooks.invalid.tap('invalid', () => {
